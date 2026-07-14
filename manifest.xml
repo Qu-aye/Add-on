@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+  xsi:type="TaskPaneApp">
+
+  <Id>c1f3e8a2-9b4d-4e7f-8a1c-2d5e6f7a8b9c</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>CiteFlow</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="CiteFlow - Citation Search &amp; Bibliography" />
+  <Description DefaultValue="Search academic databases, insert citations, and auto-generate bibliographies in any referencing style." />
+  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png" />
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-80.png" />
+  <SupportUrl DefaultValue="https://github.com/Qu-aye/Add-on/issues" />
+
+  <AppDomains>
+    <AppDomain>https://api.openalex.org</AppDomain>
+    <AppDomain>https://api.crossref.org</AppDomain>
+    <AppDomain>https://api.semanticscholar.org</AppDomain>
+    <AppDomain>https://api.core.ac.uk</AppDomain>
+    <AppDomain>https://api.datacite.org</AppDomain>
+    <AppDomain>https://api.ncbi.nlm.nih.gov</AppDomain>
+    <AppDomain>https://eutils.ncbi.nlm.nih.gov</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Document" />
+  </Hosts>
+
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://localhost:3000/taskpane.html" />
+  </DefaultSettings>
+
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Document">
+        <DesktopFormFactor>
+          <GetStarted>
+            <Title resid="GetStarted.Title"/>
+            <Description resid="GetStarted.Description"/>
+            <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
+          </GetStarted>
+          <FunctionFile resid="Commands.Url" />
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="CiteFlowGroup">
+                <Label resid="CiteFlowGroup.Label" />
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16x16" />
+                  <bt:Image size="32" resid="Icon.32x32" />
+                  <bt:Image size="80" resid="Icon.80x80" />
+                </Icon>
+                <Control xsi:type="Button" id="CiteFlow.TaskpaneButton">
+                  <Label resid="CiteFlow.TaskpaneButton.Label" />
+                  <Supertip>
+                    <Title resid="CiteFlow.TaskpaneButton.Label" />
+                    <Description resid="CiteFlow.TaskpaneButton.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16" />
+                    <bt:Image size="32" resid="Icon.32x32" />
+                    <bt:Image size="80" resid="Icon.80x80" />
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>CiteFlowPane</TaskpaneId>
+                    <SourceLocation resid="CiteFlow.Taskpane.Url" />
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/icon-16.png" />
+        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/icon-32.png" />
+        <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/icon-80.png" />
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/Qu-aye/Add-on" />
+        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html" />
+        <bt:Url id="CiteFlow.Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html" />
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="GetStarted.Title" DefaultValue="Welcome to CiteFlow!" />
+        <bt:String id="CiteFlowGroup.Label" DefaultValue="CiteFlow" />
+        <bt:String id="CiteFlow.TaskpaneButton.Label" DefaultValue="Search Citations" />
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="GetStarted.Description" DefaultValue="Search academic databases, insert formatted citations, and auto-generate bibliographies in any referencing style." />
+        <bt:String id="CiteFlow.TaskpaneButton.Tooltip" DefaultValue="Open the CiteFlow pane to search citations and manage your bibliography." />
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
