@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CiteFlow - Citation Search</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="url(#logo-grad)"/>
+          <path d="M7 9h14M7 13h10M7 17h12M7 21h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <defs><linearGradient id="logo-grad" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>
+        </svg>
+        <span class="logo-text">CiteFlow</span>
+      </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Type a title, author, DOI, or keyword..."
+          autocomplete="off"
+        />
+        <button id="searchBtn" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Search
+        </button>
+      </div>
+      <div class="search-hint" id="searchHint"></div>
+
+      <!-- Database selector chips -->
+      <div class="db-chips">
+        <span class="chip active" data-db="crossref">CrossRef</span>
+        <span class="chip" data-db="openalex">OpenAlex</span>
+        <span class="chip" data-db="semantic">Semantic Scholar</span>
+        <span class="chip" data-db="pubmed">PubMed</span>
+        <span class="chip" data-db="datacite">DataCite</span>
+        <span class="chip" data-db="core">CORE</span>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="resultsSection">
+      <div class="results-header">
+        <h3 id="resultsTitle">Results</h3>
+        <span class="results-count" id="resultsCount"></span>
+      </div>
+      <div class="results-list" id="resultsList">
+        <div class="empty-state" id="emptyState">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="1"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <p>Select text in your document or type above, then click <strong>Search</strong> to find citations.</p>
+        </div>
+      </div>
+      <div class="loading-spinner" id="loadingSpinner" style="display:none;">
+        <div class="spinner"></div>
+        <p>Searching databases...</p>
+      </div>
+    </section>
+
+    <!-- Style Selector -->
+    <section class="style-section">
+      <label for="styleSelect">Citation Style</label>
+      <select id="styleSelect">
+        <optgroup label="Popular Styles">
+          <option value="apa" selected>APA 7th Edition</option>
+          <option value="mla">MLA 9th Edition</option>
+          <option value="chicago">Chicago (Author-Date)</option>
+          <option value="harvard">Harvard</option>
+          <option value="vancouver">Vancouver</option>
+          <option value="ieee">IEEE</option>
+        </optgroup>
+        <optgroup label="Scientific & Medical">
+          <option value="ama">AMA (American Medical Association)</option>
+          <option value="acs">ACS (American Chemical Society)</option>
+          <option value="cse">CSE (Council of Science Editors)</option>
+          <option value="nature">Nature</option>
+          <option value="science">Science</option>
+          <option value="cell">Cell Press</option>
+        </optgroup>
+        <optgroup label="Humanities & Social Sciences">
+          <option value="chicago-note">Chicago (Notes & Bibliography)</option>
+          <option value="turabian">Turabian</option>
+          <option value="aaa">AAA (American Anthropological Assoc.)</option>
+          <option value="apa-6">APA 6th Edition</option>
+          <option value="mla-8">MLA 8th Edition</option>
+          <option value="asa">ASA (American Sociological Assoc.)</option>
+        </optgroup>
+        <optgroup label="Law & Government">
+          <option value="bluebook">Bluebook (Legal)</option>
+          <option value="oscola">OSCOLA (Oxford Legal)</option>
+          <option value="aglc">AGLC (Australian Legal)</option>
+          <option value="mcgill">McGill Guide</option>
+        </optgroup>
+        <optgroup label="Engineering & Technology">
+          <option value="acm">ACM (Computing)</option>
+          <option value="asce">ASCE (Civil Engineering)</option>
+          <option value="asme">ASME (Mechanical Engineering)</option>
+        </optgroup>
+        <optgroup label="Regional & Discipline-Specific">
+          <option value="abnt">ABNT (Brazilian)</option>
+          <option value="gost">GOST (Russian)</option>
+          <option value="iso690">ISO 690</option>
+          <option value="bibtex">BibTeX</option>
+          <option value="ris">RIS Format</option>
+        </optgroup>
+      </select>
+    </section>
+
+    <!-- Bibliography Section -->
+    <section class="bibliography-section" id="bibliographySection">
+      <div class="bib-header">
+        <h3>Bibliography</h3>
+        <button id="insertBibBtn" class="btn-secondary" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Insert at End of Document
+        </button>
+      </div>
+      <div class="bib-list" id="bibList">
+        <div class="empty-state small">
+          <p>No references added yet. Search and insert citations to build your bibliography.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script src="bundle.js"></script>
+</body>
+</html>
