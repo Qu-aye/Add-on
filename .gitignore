@@ -2,3 +2,24 @@ node_modules/
 dist/
 *.log
 .DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Build
+*.js.map
+*.ts.map
+.env
+.env.local

@@ -21,6 +21,15 @@
       </div>
     </header>
 
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab active" data-tab="search">🔍 Search</button>
+      <button class="tab" data-tab="ai">✨ AI Tools</button>
+    </div>
+
+    <!-- Search Tab -->
+    <div id="search-tab" class="tab-content active">
+
     <!-- Search Section -->
     <section class="search-section">
       <div class="search-box">
@@ -130,6 +139,110 @@
         </div>
       </div>
     </section>
+    </div><!-- /search-tab -->
+
+    <!-- AI Tools Tab -->
+    <div id="ai-tab" class="tab-content">
+      <!-- Paraphraser -->
+      <section class="ai-section">
+        <div class="ai-section-header">
+          <h3>✏️ Paraphraser</h3>
+          <span class="ai-badge">7 modes</span>
+        </div>
+        <div class="ai-controls">
+          <select id="paraphraseMode" class="ai-select">
+            <option value="standard">Standard</option>
+            <option value="fluency">Fluency</option>
+            <option value="formal">Formal</option>
+            <option value="academic">Academic</option>
+            <option value="simple">Simple</option>
+            <option value="creative">Creative</option>
+            <option value="custom">Custom</option>
+          </select>
+          <div class="ai-slider-group">
+            <label>Synonym Level: <span id="synonymLevelVal">50</span>%</label>
+            <input type="range" id="synonymLevel" min="0" max="100" value="50" />
+          </div>
+        </div>
+        <textarea id="paraphraseInput" class="ai-textarea" placeholder="Paste or type text to paraphrase..." rows="3"></textarea>
+        <div class="ai-actions">
+          <button id="paraphraseBtn" class="btn-primary btn-ai">Paraphrase</button>
+        </div>
+        <div id="paraphraseResult" class="ai-result"></div>
+      </section>
+
+      <!-- Grammar Checker -->
+      <section class="ai-section">
+        <div class="ai-section-header">
+          <h3>✅ Grammar Checker</h3>
+        </div>
+        <textarea id="grammarInput" class="ai-textarea" placeholder="Paste text to check for grammar errors..." rows="3"></textarea>
+        <div class="ai-actions">
+          <button id="grammarCheckBtn" class="btn-primary btn-ai">Check Grammar</button>
+          <button id="grammarFixBtn" class="btn-secondary btn-ai" disabled>Fix All</button>
+        </div>
+        <div id="grammarResult" class="ai-result"></div>
+      </section>
+
+      <!-- Summarizer -->
+      <section class="ai-section">
+        <div class="ai-section-header">
+          <h3>📝 Summarizer</h3>
+        </div>
+        <textarea id="summarizeInput" class="ai-textarea" placeholder="Paste text to summarize..." rows="3"></textarea>
+        <div class="ai-controls">
+          <div class="ai-slider-group">
+            <label>Length: <span id="summaryLengthVal">50</span>%</label>
+            <input type="range" id="summaryLength" min="0" max="100" value="50" />
+          </div>
+          <select id="summaryFormat" class="ai-select">
+            <option value="paragraph">Paragraph</option>
+            <option value="bullets">Bullet Points</option>
+            <option value="key-sentences">Key Sentences</option>
+          </select>
+        </div>
+        <div class="ai-actions">
+          <button id="summarizeBtn" class="btn-primary btn-ai">Summarize</button>
+        </div>
+        <div id="summarizeResult" class="ai-result"></div>
+      </section>
+
+      <!-- Co-Writer (Autocomplete) -->
+      <section class="ai-section">
+        <div class="ai-section-header">
+          <h3>✍️ Co-Writer</h3>
+          <span class="ai-badge">Autocomplete</span>
+        </div>
+        <textarea id="autocompleteInput" class="ai-textarea" placeholder="Start typing a sentence... the AI will suggest a continuation." rows="3"></textarea>
+        <div class="ai-actions">
+          <button id="autocompleteBtn" class="btn-primary btn-ai">Get Suggestion</button>
+        </div>
+        <div id="autocompleteResult" class="ai-result"></div>
+      </section>
+
+      <!-- AI Citation Parser -->
+      <section class="ai-section">
+        <div class="ai-section-header">
+          <h3>🔗 AI Citation Parser</h3>
+          <span class="ai-badge">Auto-detect</span>
+        </div>
+        <textarea id="parseInput" class="ai-textarea" placeholder="Paste a URL, book title, article title, or raw metadata..." rows="2"></textarea>
+        <div class="ai-controls">
+          <select id="parseStyle" class="ai-select">
+            <option value="apa">APA</option>
+            <option value="mla">MLA</option>
+            <option value="chicago">Chicago</option>
+            <option value="harvard">Harvard</option>
+            <option value="vancouver">Vancouver</option>
+            <option value="ieee">IEEE</option>
+          </select>
+        </div>
+        <div class="ai-actions">
+          <button id="parseBtn" class="btn-primary btn-ai">Generate Citation</button>
+        </div>
+        <div id="parseResult" class="ai-result"></div>
+      </section>
+    </div>
 
     <!-- Toast -->
     <div class="toast" id="toast"></div>

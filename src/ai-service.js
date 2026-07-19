@@ -1,14 +1,22 @@
 /**
- * CiteFlow — AI Service (DeepSeek API)
+ * CiteFlow — AI Service (NVIDIA NIM / DeepSeek API)
  * Handles: Paraphraser, Grammar Checker, Summarizer, Co-Writer, AI Citation Parsing
  */
 
+const getBaseUrl = () => {
+  const envBase = typeof DEEPSEEK_BASE_URL !== 'undefined' ? DEEPSEEK_BASE_URL : '';
+  if (!envBase) return 'https://api.deepseek.com/v1/chat/completions';
+  return envBase.replace(/\/$/, '') + '/chat/completions';
+};
+
 const DEEPSEEK_CONFIG = {
   apiKey: typeof DEEPSEEK_API_KEY !== 'undefined' ? DEEPSEEK_API_KEY : '',
-  baseUrl: 'https://api.deepseek.com/v1/chat/completions',
-  model: 'deepseek-chat',
-  maxTokens: 2048,
-  temperature: 0.7,
+  baseUrl: getBaseUrl(),
+  model: typeof NEXT_PUBLIC_AI_MODEL !== 'undefined' ? NEXT_PUBLIC_AI_MODEL : 'deepseek-chat',
+  maxTokens: 16384,
+  temperature: 1,
+  topP: 0.95,
+  reasoningEffort: 'high',
 };
 
 /* ---------- Generic API Call ---------- */
@@ -16,7 +24,7 @@ const DEEPSEEK_CONFIG = {
 async function callDeepSeek(systemPrompt, userText, options = {}) {
   const key = options.apiKey || DEEPSEEK_CONFIG.apiKey;
   if (!key) {
-    throw new Error('DeepSeek API key not configured. Set DEEPSEEK_API_KEY in your environment.');
+    throw new Error('AI API key not configured. Set DEEPSEEK_API_KEY in your environment.');
   }
 
   const body = {
@@ -27,7 +35,14 @@ async function callDeepSeek(systemPrompt, userText, options = {}) {
     ],
     max_tokens: options.maxTokens || DEEPSEEK_CONFIG.maxTokens,
     temperature: options.temperature ?? DEEPSEEK_CONFIG.temperature,
+    top_p: options.topP ?? DEEPSEEK_CONFIG.topP,
     stream: false,
+    extra_body: {
+      chat_template_kwargs: {
+        thinking: true,
+        reasoning_effort: options.reasoningEffort || DEEPSEEK_CONFIG.reasoningEffort,
+      },
+    },
   };
 
   const resp = await fetch(DEEPSEEK_CONFIG.baseUrl, {
@@ -41,7 +56,7 @@ async function callDeepSeek(systemPrompt, userText, options = {}) {
 
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}));
-    throw new Error(`DeepSeek API error ${resp.status}: ${err.error?.message || resp.statusText}`);
+    throw new Error(`AI API error ${resp.status}: ${err.error?.message || resp.statusText}`);
   }
 
   const data = await resp.json();

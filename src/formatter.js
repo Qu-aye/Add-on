@@ -2,6 +2,8 @@
  * CiteFlow — Citation Formatter
  * Formats citations in all major referencing styles.
  */
+let inlineCitationCounter = 0;
+function resetInlineCitationCounter() { inlineCitationCounter = 0; }
 
 function formatCitation(result, style) {
   const authors = formatAuthors(result.authors, style);
@@ -215,7 +217,7 @@ function formatInlineCitation(result, style) {
       return `(${lastNames[0]} et al. ${year})`;
 
     case 'vancouver': case 'ieee': case 'ama': case 'nature':
-      return `[#]`; // Placeholder — numbered in order
+      inlineCitationCounter += 1; return `[${inlineCitationCounter}]`;
 
     case 'acs':
       return `(${lastNames[0]} et al., ${year})`;
@@ -235,5 +237,5 @@ function formatInlineCitation(result, style) {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { formatCitation, formatInlineCitation, formatAuthors };
+  module.exports = { formatCitation, formatInlineCitation, formatAuthors, resetInlineCitationCounter };
 }

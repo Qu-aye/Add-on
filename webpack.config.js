@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
+require('dotenv').config();
 
 module.exports = {
   entry: './src/taskpane.js',
@@ -27,6 +29,11 @@ module.exports = {
         { from: 'assets', to: 'assets' },
         { from: 'manifest.xml', to: 'manifest.xml' },
       ],
+    }),
+    new webpack.DefinePlugin({
+          DEEPSEEK_BASE_URL: JSON.stringify(process.env.DEEPSEEK_BASE_URL || ""),
+          NEXT_PUBLIC_AI_MODEL: JSON.stringify(process.env.NEXT_PUBLIC_AI_MODEL || ""),
+      DEEPSEEK_API_KEY: JSON.stringify(process.env.DEEPSEEK_API_KEY || ''),
     }),
   ],
   devServer: {

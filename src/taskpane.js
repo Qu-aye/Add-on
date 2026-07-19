@@ -3,6 +3,9 @@
  * Microsoft Word Add-in for citation search & bibliography management
  */
 
+require("./search-service.js");
+require("./formatter.js");
+require("./ai-service.js");
 /* globals Office, Word */
 
 Office.onReady((info) => {
@@ -39,6 +42,40 @@ const bibList = $('bibList');
 const insertBibBtn = $('insertBibBtn');
 const toast = $('toast');
 
+// AI feature wiring
+const paraphraseBtn = document.getElementById('paraphraseBtn');
+const paraphraseMode = document.getElementById('paraphraseMode');
+const paraphraseInput = document.getElementById('paraphraseInput');
+const paraphraseResult = document.getElementById('paraphraseResult');
+const checkGrammarBtn = document.getElementById('grammarCheckBtn');
+const fixGrammarBtn = document.getElementById('grammarFixBtn');
+const grammarInput = document.getElementById('grammarInput');
+const grammarResult = document.getElementById('grammarResult');
+const summarizeBtn = document.getElementById('summarizeBtn');
+const summarizeInput = document.getElementById('summarizeInput');
+const summarizeResult = document.getElementById('summarizeResult');
+const autocompleteBtn = document.getElementById('autocompleteBtn');
+const autocompleteInput = document.getElementById('autocompleteInput');
+const autocompleteResult = document.getElementById('autocompleteResult');
+const parseCitationBtn = document.getElementById('parseBtn');
+const citationInput = document.getElementById('parseInput');
+const citationStyle = document.getElementById('parseStyle');
+const citationResult = document.getElementById('parseResult');
+
+// Slider value displays
+const synonymLevel = document.getElementById('synonymLevel');
+const synonymLevelVal = document.getElementById('synonymLevelVal');
+const summaryLength = document.getElementById('summaryLength');
+const summaryLengthVal = document.getElementById('summaryLengthVal');
+
+synonymLevel.addEventListener('input', () => {
+  synonymLevelVal.textContent = synonymLevel.value;
+});
+
+summaryLength.addEventListener('input', () => {
+  summaryLengthVal.textContent = summaryLength.value;
+});
+
 /* ---------- Init ---------- */
 
 async function initApp() {
@@ -71,6 +108,17 @@ async function initApp() {
   // Insert bibliography button
   insertBibBtn.addEventListener('click', insertBibliographyAtEnd);
 
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      const target = document.getElementById(tab.dataset.tab + '-tab');
+      if (target) target.classList.add('active');
+    });
+  });
+
   // Listen for selection changes in Word
   await Word.run(async (context) => {
     const doc = context.document;
@@ -99,7 +147,7 @@ async function detectSelection() {
       }
     });
   } catch (e) {
-    // Silently fail — Office.js may not be ready
+    console.warn('detectSelection: Office.js may not be ready', e);
   }
 }
 
@@ -290,9 +338,8 @@ async function insertBibliographyAtEnd() {
         const refRange = body.getRange(Word.RangeLocation.end);
         refRange.insertParagraph(`[${entry._bibNum}] ${formatted}`, Word.InsertLocation.after);
         refRange.font.size = 11;
+        await context.sync();
       }
-
-      await context.sync();
     });
     showToast('Bibliography inserted at end of document!', 'success');
   } catch (e) {
@@ -316,6 +363,14 @@ function showToast(message, type = '') {
 
 /* ---------- Helpers ---------- */
 
+
+function showAiResult(el, message, isError = false) {
+  if (!el) return;
+  el.textContent = message;
+  el.classList.remove("error", "success");
+  el.classList.add(isError ? "error" : "success");
+  el.classList.add("show");
+}
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
@@ -326,3 +381,117 @@ function escapeHtml(str) {
 window.insertCitation = insertCitation;
 window.copyFormatted = copyFormatted;
 window.removeBibEntry = removeBibEntry;
+
+// AI feature wiring
+if (paraphraseBtn && paraphraseInput && paraphraseResult) {
+  paraphraseBtn.addEventListener('click', async () => {
+    const text = paraphraseInput.value.trim();
+    if (!text) return;
+    paraphraseBtn.disabled = true;
+    paraphraseBtn.textContent = 'Processing...';
+    try {
+      const result = await paraphraseText(text, paraphraseMode ? paraphraseMode.value : 'standard');
+      showAiResult(paraphraseResult, result);
+    } catch (err) {
+      showAiResult(paraphraseResult, 'Error: ' + err.message, true);
+    } finally {
+      paraphraseBtn.disabled = false;
+      paraphraseBtn.textContent = 'Paraphrase';
+    }
+  });
+}
+
+if (checkGrammarBtn && grammarInput && grammarResult) {
+  checkGrammarBtn.addEventListener('click', async () => {
+    const text = grammarInput.value.trim();
+    if (!text) return;
+    checkGrammarBtn.disabled = true;
+    checkGrammarBtn.textContent = 'Checking...';
+    try {
+      const result = await checkGrammar(text);
+      showAiResult(grammarResult, result);
+    } catch (err) {
+      showAiResult(grammarResult, 'Error: ' + err.message, true);
+    } finally {
+      checkGrammarBtn.disabled = false;
+      checkGrammarBtn.textContent = 'Check Grammar';
+    }
+  });
+}
+
+if (fixGrammarBtn && grammarInput && grammarResult) {
+  fixGrammarBtn.addEventListener('click', async () => {
+    const text = grammarInput.value.trim();
+    if (!text) return;
+    fixGrammarBtn.disabled = true;
+    fixGrammarBtn.textContent = 'Fixing...';
+    try {
+      const result = await fixGrammarErrors(text);
+      showAiResult(grammarResult, result);
+    } catch (err) {
+      showAiResult(grammarResult, 'Error: ' + err.message, true);
+    } finally {
+      fixGrammarBtn.disabled = false;
+      fixGrammarBtn.textContent = 'Fix Grammar';
+    }
+  });
+}
+
+if (summarizeBtn && summarizeInput && summarizeResult) {
+  summarizeBtn.addEventListener('click', async () => {
+    const text = summarizeInput.value.trim();
+    if (!text) return;
+    summarizeBtn.disabled = true;
+    summarizeBtn.textContent = 'Summarizing...';
+    try {
+      const length = document.getElementById('summaryLength').value;
+      const format = document.getElementById('summaryFormat').value;
+      const result = await summarizeText(text, length, format);
+      showAiResult(summarizeResult, result);
+    } catch (err) {
+      showAiResult(summarizeResult, 'Error: ' + err.message, true);
+    } finally {
+      summarizeBtn.disabled = false;
+      summarizeBtn.textContent = 'Summarize';
+    }
+  });
+}
+
+if (autocompleteBtn && autocompleteInput && autocompleteResult) {
+  autocompleteBtn.addEventListener('click', async () => {
+    const text = autocompleteInput.value.trim();
+    if (!text) return;
+    autocompleteBtn.disabled = true;
+    autocompleteBtn.textContent = 'Generating...';
+    try {
+      const result = await autocompleteText(text);
+      showAiResult(autocompleteResult, result);
+    } catch (err) {
+      showAiResult(autocompleteResult, 'Error: ' + err.message, true);
+    } finally {
+      autocompleteBtn.disabled = false;
+      autocompleteBtn.textContent = 'Autocomplete';
+    }
+  });
+}
+
+if (parseCitationBtn && citationInput && citationResult) {
+  parseCitationBtn.addEventListener('click', async () => {
+    const text = citationInput.value.trim();
+    if (!text) return;
+    parseCitationBtn.disabled = true;
+    parseCitationBtn.textContent = 'Parsing...';
+    try {
+      const style = citationStyle ? citationStyle.value : 'apa';
+      const result = await parseCitationFromAI(text, style);
+      showAiResult(citationResult, result);
+    } catch (err) {
+      showAiResult(citationResult, 'Error: ' + err.message, true);
+    } finally {
+      parseCitationBtn.disabled = false;
+      parseCitationBtn.textContent = 'Parse Citation';
+    }
+  });
+}
+
+// Listen for selection changes in Word

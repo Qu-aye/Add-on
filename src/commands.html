@@ -7,6 +7,29 @@
 <body>
   <script>
     Office.onReady(() => {});
+
+    // Insert citation at cursor position
+    function insertCitation(event) {
+      Office.context.document.getSelectedDataAsync(Office.CoercionType.Text, (result) => {
+        if (result.status === Office.AsyncResultStatus.Succeeded) {
+          // Open taskpane with selected text
+          Office.addin.showAsTaskpane();
+        }
+        event.completed();
+      });
+    }
+
+    // Insert bibliography at end of document
+    function insertBibliography(event) {
+      Office.addin.showAsTaskpane();
+      event.completed();
+    }
+
+    // Open the CiteFlow taskpane
+    function openTaskpane(event) {
+      Office.addin.showAsTaskpane();
+      event.completed();
+    }
   </script>
 </body>
 </html>
