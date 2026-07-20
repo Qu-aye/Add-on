@@ -17,6 +17,7 @@
   <SupportUrl DefaultValue="https://github.com/Qu-aye/Add-on/issues" />
 
   <AppDomains>
+    <AppDomain>https://humble-space-disco-pq45g4r6j9qc74vw-3000.app.github.dev</AppDomain>
     <AppDomain>https://api.openalex.org</AppDomain>
     <AppDomain>https://api.crossref.org</AppDomain>
     <AppDomain>https://api.semanticscholar.org</AppDomain>

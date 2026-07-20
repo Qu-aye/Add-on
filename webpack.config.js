@@ -44,6 +44,9 @@ module.exports = {
       'Access-Control-Allow-Origin': '*',
     },
     host: '0.0.0.0',
-    allowedHosts: 'all'
+    allowedHosts: 'all',
+    client: {
+      webSocketURL: 'wss://humble-space-disco-pq45g4r6j9qc74vw-3000.app.github.dev/ws',
+    },
   },
 };

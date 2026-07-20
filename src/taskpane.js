@@ -3,7 +3,7 @@
  * Microsoft Word Add-in for citation search & bibliography management
  */
 
-require("./search-service.js");
+const { searchCitations } = require("./search-service.js");
 require("./formatter.js");
 require("./ai-service.js");
 /* globals Office, Word */
@@ -205,16 +205,15 @@ function renderResults(results) {
     const authors = (r.authors || ['Unknown']).slice(0, 3).join(', ') + (r.authors?.length > 3 ? ' et al.' : '');
     const sourceClass = `source-${r.source || r._sourceDb || 'crossref'}`;
     const sourceLabel = (r.source || r._sourceDb || 'crossref').toUpperCase();
-
     return `
       <div class="result-card" data-index="${i}">
         <span class="result-source ${sourceClass}">${sourceLabel}</span>
         <div class="result-title">${escapeHtml(r.title)}</div>
         <div class="result-authors">${escapeHtml(authors)}</div>
         <div class="result-meta">
-          ${r.year ? `<span>📅 ${r.year}</span>` : ''}
-          ${r.journal ? `<span>📰 ${escapeHtml(r.journal)}</span>` : ''}
-          ${r.doi ? `<span>🔗 ${escapeHtml(r.doi)}</span>` : ''}
+          ${r.year ? `<span class="meta-tag">📅 ${r.year}</span>` : ''}
+          ${r.journal ? `<span class="meta-tag result-journal">📰 ${escapeHtml(r.journal)}</span>` : ''}
+          ${r.doi ? `<span class="meta-tag">🔗 ${escapeHtml(r.doi)}</span>` : ''}
         </div>
         <div class="result-actions">
           <button class="btn-insert-cite" onclick="insertCitation(${i})">
