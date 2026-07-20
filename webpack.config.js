@@ -43,5 +43,7 @@ module.exports = {
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
+    host: '0.0.0.0',
+    allowedHosts: 'all'
   },
 };
